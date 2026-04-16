@@ -61,6 +61,17 @@ def create_app(data_dir=None):
     def inject_trace_id():
         g.trace_id = generate_trace_id()
 
+    # 健康检查端点（对齐 09 §2）
+    @app.route("/health", methods=["GET"])
+    def health_check():
+        """健康检查，返回服务状态和运行时间"""
+        uptime = time.time() - get_start_time()
+        return {
+            "status": "ok",
+            "service": "m1-qa",
+            "uptime": round(uptime, 2),
+        }
+
     # 注册 Blueprint
     from agent_bp import agent_bp
     app.register_blueprint(agent_bp)
