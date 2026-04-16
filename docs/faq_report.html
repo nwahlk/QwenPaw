@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoPaw 常见问题 FAQ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #333; line-height: 1.6; }
+
+        /* ── 南方基金蓝主色 ── */
+        :root {
+            --primary: #0052A5;
+            --primary-dark: #003087;
+            --primary-light: #e6eef8;
+            --primary-mid: #1a6cc8;
+        }
+
+        /* ── Layout ── */
+        .container { max-width: 960px; margin: 0 auto; padding: 28px 20px; }
+
+        /* ── Header ── */
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; padding: 40px 36px; border-radius: 12px; margin-bottom: 24px; position: relative; overflow: hidden; }
+        .header::after { content: ''; position: absolute; right: -50px; top: -50px; width: 240px; height: 240px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+        .header::before { content: ''; position: absolute; right: 80px; bottom: -70px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; letter-spacing: .02em; position: relative; }
+        .header .subtitle { font-size: 13px; opacity: 0.82; position: relative; }
+        .header-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; position: relative; }
+        .header-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; background: rgba(255,255,255,0.18); }
+
+        /* ── KPI Grid ── */
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+        .summary-item { background: #fff; border-radius: 10px; padding: 18px 14px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-top: 3px solid var(--primary); transition: transform .2s; }
+        .summary-item:hover { transform: translateY(-2px); }
+        .summary-item .label { font-size: 12px; color: #888; margin-bottom: 8px; }
+        .summary-item .value { font-size: 24px; font-weight: 700; color: var(--primary); font-family: 'Menlo', 'Consolas', monospace; }
+
+        /* ── Cards ── */
+        .card { background: #fff; border-radius: 10px; padding: 26px 28px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); transition: box-shadow .2s; }
+        .card:hover { box-shadow: 0 4px 16px rgba(0,82,165,0.1); }
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--primary-light); }
+        .card-header .icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .card-header h2 { font-size: 16px; font-weight: 700; color: var(--primary); }
+        .card-header .count { margin-left: auto; font-size: 12px; color: #aaa; background: var(--primary-light); padding: 2px 10px; border-radius: 10px; color: var(--primary); font-weight: 600; }
+
+        /* ── FAQ Items ── */
+        .faq-item { margin-bottom: 18px; border: 1px solid #eef0f4; border-radius: 8px; overflow: hidden; }
+        .faq-item:last-child { margin-bottom: 0; }
+        .faq-q { background: var(--primary-light); padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--primary-dark); display: flex; align-items: flex-start; gap: 8px; }
+        .faq-q .q-badge { background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+        .faq-a { padding: 14px 16px; font-size: 13.5px; color: #444; line-height: 1.7; }
+        .faq-a p { margin-bottom: 8px; }
+        .faq-a p:last-child { margin-bottom: 0; }
+        .faq-a ol, .faq-a ul { padding-left: 20px; margin: 6px 0; }
+        .faq-a li { margin: 5px 0; }
+        .faq-a strong { color: #333; }
+
+        /* ── Code ── */
+        .faq-a pre { background: #1e2432; color: #c9d1d9; border-radius: 6px; padding: 12px 14px; font-size: 12px; font-family: 'Menlo', 'Consolas', monospace; overflow-x: auto; margin: 10px 0; line-height: 1.6; white-space: pre; }
+        code { font-family: 'Menlo', 'Consolas', monospace; font-size: 12.5px; background: #edf0f5; color: #c0392b; padding: 1px 6px; border-radius: 3px; }
+
+        /* ── Links ── */
+        .link-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 4px; }
+        .link-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid #eef0f4; border-radius: 8px; text-decoration: none; color: #333; transition: all .15s; }
+        .link-item:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+        .link-item .link-icon { font-size: 20px; }
+        .link-item .link-text { font-size: 13.5px; font-weight: 600; }
+        .link-item .link-desc { font-size: 12px; color: #888; margin-top: 1px; }
+
+        /* ── Tip box ── */
+        .tip { background: #fff8e1; border-left: 4px solid #ffb300; border-radius: 0 6px 6px 0; padding: 10px 14px; font-size: 13px; color: #664d00; margin: 10px 0; }
+
+        /* ── Disclaimer ── */
+        .disclaimer { background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 20px 24px; margin-top: 24px; margin-bottom: 8px; }
+        .disclaimer h3 { color: #7a4f00; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .disclaimer p { font-size: 12.5px; color: #7a5c00; margin-bottom: 6px; line-height: 1.6; }
+        .disclaimer p:last-child { margin-bottom: 0; }
+
+        /* ── Footer ── */
+        .footer { text-align: center; padding: 24px; color: #bbb; font-size: 12px; border-top: 1px solid #eee; margin-top: 8px; }
+
+        /* ── Back to top ── */
+        #back-to-top { position: fixed; bottom: 32px; right: 32px; width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; font-size: 18px; box-shadow: 0 2px 10px rgba(0,82,165,0.4); display: none; align-items: center; justify-content: center; transition: transform .2s; z-index: 999; }
+        #back-to-top:hover { transform: translateY(-3px); background: var(--primary-dark); }
+        #back-to-top.show { display: flex; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .summary-grid { grid-template-columns: repeat(3, 1fr); }
+            .link-grid { grid-template-columns: 1fr; }
+            .header { padding: 28px 20px; }
+        }
+    </style>
+</head>
+<body>
+<button id="back-to-top" title="回到顶部">↑</button>
+<div class="container">
+
+<!-- 头部 -->
+<div class="header">
+    <h1>🐾 CoPaw — 常见问题 FAQ</h1>
+    <div class="subtitle">安装 · 运行 · 频道 · Skills · 更新 · 全方位解答</div>
+    <div class="header-badges">
+        <span class="header-badge">📦 v1.0.1b1</span>
+        <span class="header-badge">🏢 AgentScope · Alibaba</span>
+        <span class="header-badge">📅 2026-04-10</span>
+    </div>
+</div>
+
+<!-- 概览指标 -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="label">问题总数</div>
+        <div class="value">15</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">安装相关</div>
+        <div class="value">3</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">运行相关</div>
+        <div class="value">3</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">频道/Skills</div>
+        <div class="value">4</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">更新相关</div>
+        <div class="value">1</div>
+    </div>
+</div>
+
+<!-- 安装相关 -->
+<div class="card" id="install">
+    <div class="card-header">
+        <div class="icon" style="background:#e6eef8;">🔧</div>
+        <h2>安装相关</h2>
+        <span class="count">3 个问题</span>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>pip install 报错怎么办？</div>
+        <div class="faq-a">
+            <p>确保 Python 版本为 <strong>3.10 ~ 3.13</strong>，运行以下命令检查：</p>
+            <pre>python --version</pre>
+            <p>如果版本不对，建议使用脚本安装或 Docker 方式。</p>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>Windows 企业版 LTSC 安装失败？</div>
+        <div class="faq-a">
+            <p>LTSC 环境的 PowerShell 可能运行在受限语言模式下。解决方法：</p>
+            <ol>
+                <li><strong>使用 CMD 安装</strong>：下载 <code>install.bat</code> 执行</li>
+                <li><strong>手动安装 uv</strong>：从 GitHub Release 下载，放入 PATH</li>
+                <li><strong>手动添加 PATH</strong>：将 <code>%USERPROFILE%\.copaw\bin</code> 添加到系统环境变量</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>前端控制台空白？</div>
+        <div class="faq-a">
+            <p>确保已构建前端，依次执行：</p>
+            <pre>cd console && npm ci && npm run build && cd ..
+mkdir -p src/copaw/console
+cp -R console/dist/. src/copaw/console/</pre>
+        </div>
+    </div>
+</div>
+
+<!-- 运行相关 -->
+<div class="card" id="runtime">
+    <div class="card-header">
+        <div class="icon" style="background:#e8f5e9;">▶️</div>
+        <h2>运行相关</h2>
+        <span class="count">3 个问题</span>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>启动后无法访问 http://127.0.0.1:8088/？</div>
+        <div class="faq-a">
+            <ol>
+                <li>检查端口是否被占用：<code>lsof -i :8088</code>（macOS/Linux）或 <code>netstat -ano | findstr 8088</code>（Windows）</li>
+                <li>更换端口：<code>export COPAW_PORT=9090</code></li>
+                <li>检查防火墙设置</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>对话无响应？</div>
+        <div class="faq-a">
+            <ol>
+                <li>确认已配置有效的 API Key（<strong>设置 → 模型</strong>）</li>
+                <li>检查网络连接</li>
+                <li>查看 API Key 额度是否用尽</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>Docker 中无法连接本地 Ollama？</div>
+        <div class="faq-a">
+            <p>Docker 容器内 <code>localhost</code> 指向容器自身。使用 <code>host.docker.internal</code> 替代：</p>
+            <pre>docker run --add-host=host.docker.internal:host-gateway ...</pre>
+            <p>然后 Base URL 填写 <code>http://host.docker.internal:11434</code>。</p>
+        </div>
+    </div>
+</div>
+
+<!-- 频道相关 -->
+<div class="card" id="channels">
+    <div class="card-header">
+        <div class="icon" style="background:#f3e5f5;">💬</div>
+        <h2>频道相关</h2>
+        <span class="count">2 个问题</span>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>钉钉机器人配置后无响应？</div>
+        <div class="faq-a">
+            <ol>
+                <li>确认 AppKey、AppSecret、Token 配置正确</li>
+                <li>确认机器人已添加到群聊</li>
+                <li>检查消息接收地址是否正确</li>
+                <li>查看日志排查错误</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>iMessage 在 Linux/Windows 上不可用？</div>
+        <div class="faq-a">
+            <div class="tip">⚠️ iMessage 仅支持 macOS。在其他系统上请使用其他频道（钉钉、飞书、Discord、Telegram 等）。</div>
+        </div>
+    </div>
+</div>
+
+<!-- Skills 相关 -->
+<div class="card" id="skills">
+    <div class="card-header">
+        <div class="icon" style="background:#fff3e0;">⚡</div>
+        <h2>Skills 相关</h2>
+        <span class="count">2 个问题</span>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>自定义技能未加载？</div>
+        <div class="faq-a">
+            <ol>
+                <li>确认技能目录包含 <code>SKILL.md</code> 文件</li>
+                <li>确认技能目录放在工作目录的 <code>skills/</code> 下</li>
+                <li>重启 CoPaw</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>技能安全扫描报错？</div>
+        <div class="faq-a">
+            <p>扫描检测到潜在风险。检查技能代码是否包含：</p>
+            <ul>
+                <li>硬编码 API Key</li>
+                <li>可疑的外部网络请求</li>
+                <li>Shell 命令注入模式</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- 更新相关 -->
+<div class="card" id="update">
+    <div class="card-header">
+        <div class="icon" style="background:#e8f5e9;">🔄</div>
+        <h2>更新相关</h2>
+        <span class="count">1 个问题</span>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-q"><span class="q-badge">Q</span>更新后功能异常？</div>
+        <div class="faq-a">
+            <p>大版本更新后需要依次执行：</p>
+            <ol>
+                <li>重新构建前端</li>
+                <li>重新安装 Python 包</li>
+                <li>重启服务</li>
+                <li>清除浏览器缓存（<code>Ctrl+Shift+R</code>）</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<!-- 更多资源 -->
+<div class="card" id="more">
+    <div class="card-header">
+        <div class="icon" style="background:#e6eef8;">🔗</div>
+        <h2>更多资源</h2>
+    </div>
+    <div class="link-grid">
+        <a class="link-item" href="https://copaw.agentscope.io/docs/faq" target="_blank">
+            <span class="link-icon">📄</span>
+            <div>
+                <div class="link-text">在线文档</div>
+                <div class="link-desc">copaw.agentscope.io/docs/faq</div>
+            </div>
+        </a>
+        <a class="link-item" href="https://github.com/agentscope-ai/CoPaw/issues" target="_blank">
+            <span class="link-icon">🐛</span>
+            <div>
+                <div class="link-text">GitHub Issues</div>
+                <div class="link-desc">提交 Bug 或功能建议</div>
+            </div>
+        </a>
+        <a class="link-item" href="https://discord.gg/eYMpfnkG8h" target="_blank">
+            <span class="link-icon">💬</span>
+            <div>
+                <div class="link-text">Discord 社区</div>
+                <div class="link-desc">discord.gg/eYMpfnkG8h</div>
+            </div>
+        </a>
+        <a class="link-item" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,OmDlBXpjW+I2vWjKDsjvI9dhcXjGZi3bQiojOq3dlDw=" target="_blank">
+            <span class="link-icon">📱</span>
+            <div>
+                <div class="link-text">钉钉用户群</div>
+                <div class="link-desc">扫码加入技术交流群</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 免责声明 -->
+<div class="disclaimer">
+    <h3>⚠️ 免责声明</h3>
+    <p>1. 本报告所载数据和信息仅供参考，不构成任何投资建议或承诺。过往业绩不代表未来表现。</p>
+    <p>2. 投资有风险，入市需谨慎。请谨慎评估自身风险承受能力，独立做出投资决策。</p>
+    <p>3. 数据来源于公开市场信息及第三方平台，不保证准确性、完整性和及时性。</p>
+    <p>4. 本报告仅供研究分析使用，不作为买卖依据。投资前请阅读相关法律文件。</p>
+    <p>5. 市场有风险，投资需谨慎。请根据自身风险承受能力审慎决策。</p>
+</div>
+
+<div class="footer">
+    CoPaw FAQ 报告 &copy; 2026 &nbsp;|&nbsp; 基于 FAQ.md 自动生成 &nbsp;|&nbsp; 报告时间：2026-04-10
+</div>
+
+</div>
+
+<script>
+const btn = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+    btn.classList.toggle('show', window.scrollY > 300);
+});
+btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>

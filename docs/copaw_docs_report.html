@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoPaw 项目文档报告</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #333; line-height: 1.6; }
+
+        /* ── Layout ── */
+        .page-layout { display: flex; max-width: 1400px; margin: 0 auto; padding: 24px 16px; gap: 24px; align-items: flex-start; }
+        .main-content { flex: 1; min-width: 0; }
+
+        /* ── Sidebar Nav ── */
+        .sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 16px 0; }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+        .sidebar-title { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: .08em; padding: 0 16px 8px; }
+        .sidebar-nav a { display: block; padding: 6px 16px; font-size: 13px; color: #555; text-decoration: none; border-left: 3px solid transparent; transition: all .15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-nav a:hover { color: #1a73e8; background: #f0f6ff; border-left-color: #1a73e8; }
+        .sidebar-nav a.active { color: #1a73e8; font-weight: 600; border-left-color: #1a73e8; background: #f0f6ff; }
+
+        /* ── Header ── */
+        .header { background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); color: #fff; padding: 40px 36px; border-radius: 12px; margin-bottom: 24px; position: relative; overflow: hidden; }
+        .header::after { content: ''; position: absolute; right: -40px; top: -40px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+        .header::before { content: ''; position: absolute; right: 60px; bottom: -60px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+        .header h1 { font-size: 26px; margin-bottom: 8px; font-weight: 700; letter-spacing: .02em; }
+        .header .subtitle { font-size: 13px; opacity: 0.82; }
+        .header-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+        .header-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; background: rgba(255,255,255,0.18); backdrop-filter: blur(4px); }
+
+        /* ── Cards ── */
+        .card { background: #fff; border-radius: 10px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); transition: box-shadow .2s; }
+        .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .card h2 { font-size: 17px; color: #1a73e8; margin-bottom: 18px; padding-left: 14px; border-left: 4px solid #1a73e8; display: flex; align-items: center; gap: 8px; }
+        .card h2 .section-num { font-size: 12px; background: #e8f0fe; color: #1a73e8; padding: 1px 7px; border-radius: 10px; font-weight: 600; }
+        .card h3 { font-size: 14px; font-weight: 700; color: #444; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #f0f0f0; }
+        .card h4 { font-size: 13px; color: #666; margin: 12px 0 6px; font-weight: 600; }
+
+        /* ── KPI Grid ── */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .summary-item { background: #fff; border-radius: 10px; padding: 20px 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-top: 3px solid #1a73e8; transition: transform .2s; }
+        .summary-item:hover { transform: translateY(-2px); }
+        .summary-item .label { font-size: 12px; color: #888; margin-bottom: 8px; letter-spacing: .02em; }
+        .summary-item .value { font-size: 26px; font-weight: 700; color: #1a73e8; font-family: 'Menlo', 'Consolas', monospace; }
+
+        /* ── Tables ── */
+        .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #eef0f4; margin: 12px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        th { background: #f5f7fa; color: #555; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 2px solid #e4e8ef; white-space: nowrap; }
+        td { padding: 9px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafe; }
+
+        /* ── Tags ── */
+        .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+        .tag-blue { background: #e3f2fd; color: #1565c0; }
+        .tag-green { background: #e8f5e9; color: #2e7d32; }
+        .tag-orange { background: #fff3e0; color: #e65100; }
+        .tag-purple { background: #f3e5f5; color: #7b1fa2; }
+        .tag-red { background: #fce4ec; color: #c62828; }
+        .tag-gray { background: #f5f5f5; color: #616161; }
+
+        /* ── Text helpers ── */
+        .section-desc { color: #666; font-size: 13.5px; margin-bottom: 18px; padding: 10px 14px; background: #f8f9fc; border-radius: 6px; border-left: 3px solid #c5d8f8; }
+
+        /* ── Code ── */
+        pre { background: #1e2432; color: #c9d1d9; border-radius: 8px; padding: 16px 18px; font-size: 12.5px; font-family: 'Menlo', 'Consolas', 'Courier New', monospace; overflow-x: auto; margin: 12px 0; line-height: 1.65; white-space: pre; position: relative; }
+        pre .comment { color: #6a9955; }
+        code { font-family: 'Menlo', 'Consolas', monospace; font-size: 12.5px; background: #edf0f5; color: #c0392b; padding: 1px 6px; border-radius: 3px; }
+        .arch-diagram { background: #f8f9fa; border: 1px solid #dde2ea; border-radius: 8px; padding: 18px; font-family: 'Menlo', 'Consolas', monospace; font-size: 12px; line-height: 1.5; overflow-x: auto; white-space: pre; margin: 12px 0; color: #334; }
+
+        /* ── TOC ── */
+        .toc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 24px; }
+        .toc-grid a { color: #1a73e8; text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13.5px; border-radius: 6px; transition: background .15s; }
+        .toc-grid a:hover { background: #f0f6ff; text-decoration: none; }
+        .toc-grid a .toc-num { font-size: 11px; color: #aaa; min-width: 18px; }
+
+        /* ── Info Grid ── */
+        .two-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .info-item { padding: 14px 16px; background: #f8f9fc; border-radius: 8px; border: 1px solid #eef0f4; }
+        .info-item .info-label { font-weight: 700; font-size: 13.5px; margin-bottom: 5px; color: #333; }
+        .info-item .info-value { font-size: 13px; color: #666; line-height: 1.5; }
+
+        /* ── Risk Meter ── */
+        .risk-meter { display: flex; align-items: center; gap: 4px; margin: 8px 0; }
+        .risk-block { width: 44px; height: 22px; border-radius: 4px; }
+
+        /* ── Back to top ── */
+        #back-to-top { position: fixed; bottom: 32px; right: 32px; width: 40px; height: 40px; border-radius: 50%; background: #1a73e8; color: #fff; border: none; cursor: pointer; font-size: 18px; box-shadow: 0 2px 10px rgba(26,115,232,0.4); display: none; align-items: center; justify-content: center; transition: opacity .2s, transform .2s; z-index: 999; }
+        #back-to-top:hover { transform: translateY(-3px); background: #0d47a1; }
+        #back-to-top.show { display: flex; }
+
+        /* ── Footer ── */
+        .footer { text-align: center; padding: 28px; color: #bbb; font-size: 12px; border-top: 1px solid #eee; margin-top: 8px; }
+        .footer a { color: #1a73e8; text-decoration: none; }
+
+        /* ── Lists ── */
+        ul, ol { padding-left: 22px; margin: 8px 0; }
+        li { margin: 5px 0; font-size: 13.5px; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) { .sidebar { display: none; } .page-layout { padding: 16px; } }
+        @media (max-width: 768px) {
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .two-col { grid-template-columns: 1fr; }
+            .toc-grid { grid-template-columns: 1fr; }
+            .header { padding: 28px 20px; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+<button id="back-to-top" title="回到顶部">↑</button>
+<div class="page-layout">
+
+<!-- 侧边栏导航 -->
+<nav class="sidebar">
+    <div class="sidebar-title">文档目录</div>
+    <div class="sidebar-nav">
+        <a href="#overview">1. 项目概述</a>
+        <a href="#architecture">2. 系统架构</a>
+        <a href="#installation">3. 安装指南</a>
+        <a href="#project-structure">4. 项目结构</a>
+        <a href="#configuration">5. 配置参考</a>
+        <a href="#api">6. API 接口</a>
+        <a href="#cli">7. CLI 参考</a>
+        <a href="#channels">8. 频道配置</a>
+        <a href="#providers">9. 模型供应商</a>
+        <a href="#skills">10. Skills 系统</a>
+        <a href="#multi-agent">11. 多智能体</a>
+        <a href="#security">12. 安全特性</a>
+        <a href="#development">13. 开发指南</a>
+        <a href="#faq">14. 常见问题</a>
+        <a href="#roadmap">15. 路线图</a>
+        <a href="#full-analysis">16. 全景分析</a>
+    </div>
+</nav>
+
+<div class="main-content">
+
+<!-- 头部 -->
+<div class="header">
+    <h1>CoPaw — 项目文档综合报告</h1>
+    <div class="subtitle">基于 docs/ 目录下 16 个 Markdown 文档自动生成</div>
+    <div class="header-badges">
+        <span class="header-badge">🐾 v1.0.1b1</span>
+        <span class="header-badge">📄 Apache 2.0</span>
+        <span class="header-badge">🏢 AgentScope · Alibaba</span>
+        <span class="header-badge">📅 2026-04-10</span>
+    </div>
+</div>
+
+<!-- 概览指标 -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="label">Python 代码行数</div>
+        <div class="value">~28,500</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">内置技能数</div>
+        <div class="value">16+</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">通信频道数</div>
+        <div class="value">14</div>
+    </div>
+    <div class="summary-item">
+        <div class="label">API 路由数</div>
+        <div class="value">20+</div>
+    </div>
+</div>
+
+<!-- 目录 -->
+<div class="card">
+    <h2>目录</h2>
+    <div class="toc-grid">
+        <a href="#overview"><span class="toc-num">01</span>项目概述</a>
+        <a href="#architecture"><span class="toc-num">02</span>系统架构</a>
+        <a href="#installation"><span class="toc-num">03</span>安装指南</a>
+        <a href="#project-structure"><span class="toc-num">04</span>项目结构</a>
+        <a href="#configuration"><span class="toc-num">05</span>配置参考</a>
+        <a href="#api"><span class="toc-num">06</span>API 接口</a>
+        <a href="#cli"><span class="toc-num">07</span>CLI 参考</a>
+        <a href="#channels"><span class="toc-num">08</span>频道配置</a>
+        <a href="#providers"><span class="toc-num">09</span>模型供应商</a>
+        <a href="#skills"><span class="toc-num">10</span>Skills 系统</a>
+        <a href="#multi-agent"><span class="toc-num">11</span>多智能体</a>
+        <a href="#security"><span class="toc-num">12</span>安全特性</a>
+        <a href="#development"><span class="toc-num">13</span>开发指南</a>
+        <a href="#faq"><span class="toc-num">14</span>常见问题</a>
+        <a href="#roadmap"><span class="toc-num">15</span>路线图</a>
+        <a href="#full-analysis"><span class="toc-num">16</span>全景分析</a>
+    </div>
+</div>
+
+<!-- 1. 项目概述 -->
+<div class="card" id="overview">
+    <h2><span class="section-num">01</span> 项目概述</h2>
+    <p class="section-desc">CoPaw 是一个<strong>个人 AI 助理</strong>，安装极简，支持本地与云端部署，多端接入，能力通过 Skills 轻松扩展。</p>
+    <div class="two-col">
+        <div class="info-item"><div class="info-label">由你掌控</div><div class="info-value">记忆与个性化完全由你掌控，支持本地或云端部署，无第三方托管</div></div>
+        <div class="info-item"><div class="info-label">Skills 扩展</div><div class="info-value">内置定时任务、PDF/Office 处理、新闻摘要等；自定义技能自动加载</div></div>
+        <div class="info-item"><div class="info-label">多智能体协作</div><div class="info-value">创建多个独立智能体，各司其职，互相通信共同完成复杂任务</div></div>
+        <div class="info-item"><div class="info-label">全域触达</div><div class="info-value">钉钉、飞书、微信、Discord、Telegram、QQ、iMessage 等 14 个频道</div></div>
+    </div>
+    <h3>快速开始</h3>
+    <pre>pip install copaw
+copaw init --defaults
+copaw app</pre>
+    <p style="font-size:14px;color:#666;margin-top:8px;">打开 http://127.0.0.1:8088/ 即可使用。</p>
+</div>
+
+<!-- 2. 系统架构 -->
+<div class="card" id="architecture">
+    <h2><span class="section-num">02</span> 系统架构</h2>
+    <p class="section-desc">CoPaw 采用模块化分层架构，核心由 Agent 系统、Channel 系统、Skills 系统、Provider 系统四大模块组成。</p>
+    <div class="arch-diagram">┌─────────────────────────────────────────────────────┐
+│                    频道层 (Channels)                  │
+│  Console | 钉钉 | 飞书 | 微信 | Discord | Telegram  │
+│  QQ | iMessage | Matrix | Mattermost | MQTT | Voice │
+└──────────────────────┬──────────────────────────────┘
+                       │ 统一消息队列
+┌──────────────────────▼──────────────────────────────┐
+│                   Agent 系统层                        │
+│  CoPawAgent (ReActAgent) | 多 Agent 管理器            │
+│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐    │
+│  │  Memory   │ │  Skills  │ │  Tool Execution  │    │
+│  │  Manager  │ │  Pool    │ │  (工具执行引擎)   │    │
+│  └──────────┘ └──────────┘ └──────────────────┘    │
+└──────────────────────┬──────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────┐
+│                   服务层                              │
+│  Provider Manager | Security Guard | Token Tracker   │
+│  MCP Client       | Cron Scheduler | Tunnel Services │
+└──────────────────────────┬──────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────┐
+│                   基础设施层                          │
+│  FastAPI + Uvicorn | SQLite | File System | Docker   │
+└─────────────────────────────────────────────────────┘</div>
+
+    <h3>技术选型</h3>
+    <table>
+        <thead><tr><th>层级</th><th>技术</th><th>选择理由</th></tr></thead>
+        <tbody>
+            <tr><td>后端框架</td><td>FastAPI + Uvicorn</td><td>异步高性能，自动 OpenAPI 文档</td></tr>
+            <tr><td>Agent 框架</td><td>AgentScope</td><td>成熟的 Agent 抽象，工具调用支持</td></tr>
+            <tr><td>前端</td><td>React 18 + TypeScript + Ant Design</td><td>组件丰富，类型安全</td></tr>
+            <tr><td>构建工具</td><td>Vite</td><td>快速构建与热更新</td></tr>
+            <tr><td>状态管理</td><td>Zustand</td><td>轻量级，适合中等复杂度应用</td></tr>
+            <tr><td>定时任务</td><td>APScheduler</td><td>灵活的 cron 调度</td></tr>
+            <tr><td>容器化</td><td>Docker + supervisord</td><td>一键部署，进程管理</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 3. 安装指南 -->
+<div class="card" id="installation">
+    <h2><span class="section-num">03</span> 安装指南</h2>
+    <p class="section-desc">系统要求：Python 3.10~3.13 | macOS 10.15+ / Ubuntu 20.04+ / Windows 10+ | Node.js 18+（仅源码构建）</p>
+    <table>
+        <thead><tr><th>安装方式</th><th>命令 / 说明</th><th>适用场景</th></tr></thead>
+        <tbody>
+            <tr><td><span class="tag tag-blue">pip 安装</span></td><td><code>pip install copaw</code></td><td>熟悉 Python 的用户</td></tr>
+            <tr><td><span class="tag tag-green">脚本安装</span></td><td>macOS/Linux: <code>curl -fsSL https://copaw.agentscope.io/install.sh | bash</code></td><td>无需手动配置 Python</td></tr>
+            <tr><td><span class="tag tag-purple">Docker</span></td><td><code>docker pull agentscope/copaw:latest</code></td><td>容器化部署</td></tr>
+            <tr><td><span class="tag tag-orange">桌面应用</span></td><td>从 GitHub Releases 下载</td><td>零配置，双击运行</td></tr>
+            <tr><td><span class="tag tag-gray">阿里云 ECS</span></td><td>计算巢一键部署</td><td>云端部署</td></tr>
+            <tr><td><span class="tag tag-gray">魔搭创空间</span></td><td>一键云端配置</td><td>无需本地安装</td></tr>
+        </tbody>
+    </table>
+    <h3>Docker Compose 示例</h3>
+    <pre>version: '3.8'
+services:
+  copaw:
+    image: agentscope/copaw:latest
+    restart: always
+    ports:
+      - "127.0.0.1:8088:8088"
+    environment:
+      - COPAW_AUTH_ENABLED=true
+      - COPAW_AUTH_USERNAME=admin
+      - COPAW_AUTH_PASSWORD=yourpassword
+    volumes:
+      - copaw-data:/app/working
+      - copaw-secrets:/app/working.secret</pre>
+</div>
+
+<!-- 4. 项目结构 -->
+<div class="card" id="project-structure">
+    <h2><span class="section-num">04</span> 项目结构</h2>
+    <table>
+        <thead><tr><th>目录</th><th>说明</th><th>关键内容</th></tr></thead>
+        <tbody>
+            <tr><td><code>src/copaw/agents/</code></td><td>Agent 核心</td><td>CoPawAgent 主类、16+ 内置技能、记忆管理、生命周期钩子</td></tr>
+            <tr><td><code>src/copaw/app/</code></td><td>FastAPI Web 应用</td><td>20+ API 路由、14 个频道适配器、MCP 客户端、工作空间</td></tr>
+            <tr><td><code>src/copaw/providers/</code></td><td>LLM 供应商</td><td>OpenAI、Anthropic、Gemini、Ollama、DashScope、llama.cpp</td></tr>
+            <tr><td><code>src/copaw/security/</code></td><td>安全模块</td><td>工具防护、技能安全扫描</td></tr>
+            <tr><td><code>src/copaw/cli/</code></td><td>CLI 命令行</td><td>Click 框架，copaw 命令入口</td></tr>
+            <tr><td><code>console/</code></td><td>Web 控制台</td><td>React 18 + TypeScript + Vite + Ant Design</td></tr>
+            <tr><td><code>deploy/</code></td><td>部署配置</td><td>Dockerfile、entrypoint.sh</td></tr>
+            <tr><td><code>tests/</code></td><td>测试</td><td>单元测试 + 集成测试</td></tr>
+            <tr><td><code>website/</code></td><td>文档网站</td><td>Vite + TailwindCSS，24 个双语文档页</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 5. 配置参考 -->
+<div class="card" id="configuration">
+    <h2><span class="section-num">05</span> 配置参考</h2>
+    <h3>核心环境变量</h3>
+    <table>
+        <thead><tr><th>变量名</th><th>默认值</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td><code>COPAW_WORKING_DIR</code></td><td><code>~/.copaw</code></td><td>工作目录</td></tr>
+            <tr><td><code>COPAW_SECRET_DIR</code></td><td><code>~/.copaw.secret</code></td><td>密钥目录</td></tr>
+            <tr><td><code>COPAW_PORT</code></td><td><code>8088</code></td><td>Web 服务端口</td></tr>
+            <tr><td><code>COPAW_LOG_LEVEL</code></td><td><code>info</code></td><td>日志级别</td></tr>
+            <tr><td><code>COPAW_AUTH_ENABLED</code></td><td><code>false</code></td><td>是否启用 Web 登录认证</td></tr>
+            <tr><td><code>COPAW_LLM_MAX_QPM</code></td><td><code>600</code></td><td>每分钟最大查询数</td></tr>
+            <tr><td><code>COPAW_LLM_MAX_CONCURRENT</code></td><td><code>10</code></td><td>最大并发 LLM 调用数</td></tr>
+        </tbody>
+    </table>
+    <h3>模型 API Key</h3>
+    <table>
+        <thead><tr><th>变量名</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td><code>DASHSCOPE_API_KEY</code></td><td>阿里通义千问</td></tr>
+            <tr><td><code>OPENAI_API_KEY</code></td><td>OpenAI</td></tr>
+            <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Anthropic (Claude)</td></tr>
+            <tr><td><code>GOOGLE_API_KEY</code></td><td>Google Gemini</td></tr>
+            <tr><td><code>TAVILY_API_KEY</code></td><td>Tavily 网页搜索</td></tr>
+        </tbody>
+    </table>
+    <h3>配置文件</h3>
+    <table>
+        <thead><tr><th>文件</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td><code>config.json</code></td><td>主配置文件</td></tr>
+            <tr><td><code>jobs.json</code></td><td>定时任务</td></tr>
+            <tr><td><code>chats.json</code></td><td>聊天历史</td></tr>
+            <tr><td><code>token_usage.json</code></td><td>Token 使用统计</td></tr>
+            <tr><td><code>.env</code></td><td>环境变量（密钥等）</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 6. API 接口 -->
+<div class="card" id="api">
+    <h2><span class="section-num">06</span> API 接口文档</h2>
+    <p class="section-desc">CoPaw 提供 RESTful API，所有接口前缀为 <code>/api</code>。</p>
+    <table>
+        <thead><tr><th>模块</th><th>端点</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td rowspan="5"><span class="tag tag-blue">Agent 管理</span></td><td><code>POST /api/agents/create</code></td><td>创建 Agent</td></tr>
+            <tr><td><code>GET /api/agents</code></td><td>获取列表</td></tr>
+            <tr><td><code>GET /api/agents/{id}</code></td><td>获取详情</td></tr>
+            <tr><td><code>PUT /api/agents/{id}</code></td><td>更新</td></tr>
+            <tr><td><code>DELETE /api/agents/{id}</code></td><td>删除</td></tr>
+            <tr><td rowspan="4"><span class="tag tag-green">聊天</span></td><td><code>POST /api/chat/stream</code></td><td>流式聊天 (SSE)</td></tr>
+            <tr><td><code>GET /api/chats</code></td><td>聊天列表</td></tr>
+            <tr><td><code>POST /api/chats</code></td><td>创建聊天</td></tr>
+            <tr><td><code>GET /api/messages</code></td><td>获取消息</td></tr>
+            <tr><td rowspan="3"><span class="tag tag-purple">供应商</span></td><td><code>GET /api/providers</code></td><td>供应商列表</td></tr>
+            <tr><td><code>PUT /api/providers/{id}</code></td><td>更新供应商</td></tr>
+            <tr><td><code>POST /api/providers/check</code></td><td>检查可用性</td></tr>
+            <tr><td rowspan="3"><span class="tag tag-orange">Skills</span></td><td><code>GET /api/skills</code></td><td>技能列表</td></tr>
+            <tr><td><code>POST /api/skills/{id}/enable</code></td><td>启用技能</td></tr>
+            <tr><td><code>POST /api/skills/{id}/disable</code></td><td>禁用技能</td></tr>
+            <tr><td rowspan="3"><span class="tag tag-gray">其他</span></td><td><code>POST /api/files/upload</code></td><td>文件上传</td></tr>
+            <tr><td><code>GET /api/token-usage</code></td><td>Token 使用统计</td></tr>
+            <tr><td><code>POST /api/auth/login</code></td><td>登录认证</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 7. CLI 参考 -->
+<div class="card" id="cli">
+    <h2><span class="section-num">07</span> CLI 参考</h2>
+    <table>
+        <thead><tr><th>命令</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td><code>copaw app</code></td><td>启动 Web 应用</td></tr>
+            <tr><td><code>copaw init [--defaults]</code></td><td>初始化工作目录</td></tr>
+            <tr><td><code>copaw agents</code></td><td>管理 Agent（--create/--delete/--run）</td></tr>
+            <tr><td><code>copaw channels</code></td><td>管理频道</td></tr>
+            <tr><td><code>copaw cron</code></td><td>管理定时任务（--add/--remove）</td></tr>
+            <tr><td><code>copaw skills</code></td><td>管理技能</td></tr>
+            <tr><td><code>copaw models</code></td><td>管理模型</td></tr>
+            <tr><td><code>copaw env [--set KEY=VALUE]</code></td><td>管理环境变量</td></tr>
+            <tr><td><code>copaw update</code></td><td>更新 CoPaw</td></tr>
+            <tr><td><code>copaw shutdown</code></td><td>关闭服务</td></tr>
+            <tr><td><code>copaw uninstall [--purge]</code></td><td>卸载</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 8. 频道配置 -->
+<div class="card" id="channels">
+    <h2><span class="section-num">08</span> 频道配置</h2>
+    <table>
+        <thead><tr><th>频道</th><th>说明</th><th>所需配置</th></tr></thead>
+        <tbody>
+            <tr><td><span class="tag tag-blue">Console</span></td><td>Web 控制台（默认）</td><td>无需额外配置</td></tr>
+            <tr><td><span class="tag tag-green">钉钉</span></td><td>钉钉群机器人</td><td>AppKey、AppSecret、Token</td></tr>
+            <tr><td><span class="tag tag-green">飞书</span></td><td>飞书应用机器人</td><td>AppID、AppSecret</td></tr>
+            <tr><td><span class="tag tag-green">微信</span></td><td>微信 iLink Bot</td><td>Bot 配置</td></tr>
+            <tr><td><span class="tag tag-green">企业微信</span></td><td>企业微信应用</td><td>CorpID、AgentID、Secret</td></tr>
+            <tr><td><span class="tag tag-purple">Discord</span></td><td>Discord Bot</td><td>Bot Token</td></tr>
+            <tr><td><span class="tag tag-purple">Telegram</span></td><td>Telegram Bot</td><td>Bot Token</td></tr>
+            <tr><td><span class="tag tag-purple">QQ</span></td><td>QQ 频道机器人</td><td>AppID、Token</td></tr>
+            <tr><td><span class="tag tag-gray">iMessage</span></td><td>Apple iMessage</td><td>仅限 macOS</td></tr>
+            <tr><td><span class="tag tag-gray">Matrix</span></td><td>Matrix 协议</td><td>Homeserver URL、Token</td></tr>
+            <tr><td><span class="tag tag-gray">MQTT</span></td><td>MQTT 协议</td><td>Broker URL、Topic</td></tr>
+            <tr><td><span class="tag tag-orange">Voice</span></td><td>语音通话 (Twilio)</td><td>Account SID、Token</td></tr>
+            <tr><td><span class="tag tag-gray">小艺</span></td><td>华为小艺</td><td>设备授权</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 9. 模型供应商 -->
+<div class="card" id="providers">
+    <h2><span class="section-num">09</span> 模型供应商</h2>
+    <h3>云端供应商</h3>
+    <table>
+        <thead><tr><th>供应商</th><th>模型</th><th>配置</th></tr></thead>
+        <tbody>
+            <tr><td><span class="tag tag-blue">OpenAI</span></td><td>GPT-4o、GPT-4o-mini、o1/o3</td><td>API Key + Base URL</td></tr>
+            <tr><td><span class="tag tag-purple">Anthropic</span></td><td>Claude Opus 4.6、Sonnet 4.6、Haiku 4.5</td><td>API Key</td></tr>
+            <tr><td><span class="tag tag-green">Google Gemini</span></td><td>Gemini 2.5 Pro、Flash</td><td>API Key</td></tr>
+            <tr><td><span class="tag tag-orange">DashScope</span></td><td>qwen-max、qwen-plus、qwen-turbo</td><td>DASHSCOPE_API_KEY</td></tr>
+        </tbody>
+    </table>
+    <h3>本地供应商</h3>
+    <table>
+        <thead><tr><th>供应商</th><th>Base URL</th><th>特点</th></tr></thead>
+        <tbody>
+            <tr><td>Ollama</td><td><code>http://localhost:11434</code></td><td>支持所有 Ollama 模型</td></tr>
+            <tr><td>llama.cpp</td><td>内置</td><td>无需额外安装，Web 界面一键下载</td></tr>
+            <tr><td>LM Studio</td><td><code>http://localhost:1234/v1</code></td><td>带 GUI 的本地模型服务</td></tr>
+        </tbody>
+    </table>
+    <h3>流控机制</h3>
+    <ul>
+        <li><strong>QPM 限制</strong>: 每分钟最多 600 次查询</li>
+        <li><strong>并发限制</strong>: 最多 10 个并发调用</li>
+        <li><strong>自动重试</strong>: 指数退避，处理 429/5xx 错误</li>
+    </ul>
+</div>
+
+<!-- 10. Skills 系统 -->
+<div class="card" id="skills">
+    <h2><span class="section-num">10</span> Skills 系统</h2>
+    <p class="section-desc">CoPaw 的能力通过 Skills 扩展。每个 Skill 是一个独立模块，包含提示词、工具定义和元数据。</p>
+    <h3>内置技能</h3>
+    <table>
+        <thead><tr><th>分类</th><th>技能</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td rowspan="4"><span class="tag tag-blue">文档处理</span></td><td>pdf</td><td>PDF 读取、摘要、表单填写</td></tr>
+            <tr><td>docx</td><td>Word 文档读取与创建</td></tr>
+            <tr><td>pptx</td><td>PPT 读取、编辑与创建</td></tr>
+            <tr><td>xlsx</td><td>Excel 读取与操作</td></tr>
+            <tr><td rowspan="2"><span class="tag tag-purple">浏览器</span></td><td>browser_cdp</td><td>Chrome DevTools Protocol 自动化</td></tr>
+            <tr><td>browser_visible</td><td>可见浏览器自动化 (Playwright)</td></tr>
+            <tr><td rowspan="3"><span class="tag tag-green">通信协作</span></td><td>channel_message</td><td>跨频道发送消息</td></tr>
+            <tr><td>multi_agent_collaboration</td><td>多 Agent 间通信与协作</td></tr>
+            <tr><td>himalaya</td><td>邮件收发与日历管理</td></tr>
+            <tr><td rowspan="3"><span class="tag tag-orange">信息获取</span></td><td>news</td><td>新闻聚合与摘要</td></tr>
+            <tr><td>file_reader</td><td>本地文件读取与搜索</td></tr>
+            <tr><td>copaw_source_index</td><td>源码索引与检索</td></tr>
+            <tr><td><span class="tag tag-gray">调度</span></td><td>cron</td><td>定时任务创建与管理</td></tr>
+            <tr><td><span class="tag tag-gray">引导</span></td><td>guidance</td><td>新用户引导与帮助</td></tr>
+        </tbody>
+    </table>
+    <h3>自定义技能结构</h3>
+    <pre>my_skill/
+├── SKILL.md       # 技能定义（必须）
+├── tools.py       # 工具实现（可选）
+└── resources/     # 资源文件（可选）</pre>
+</div>
+
+<!-- 11. 多智能体 -->
+<div class="card" id="multi-agent">
+    <h2><span class="section-num">11</span> 多智能体系统</h2>
+    <p class="section-desc">CoPaw 支持创建多个独立智能体，各司其职，通过协作技能互相通信共同完成复杂任务。</p>
+    <h3>使用场景</h3>
+    <table>
+        <thead><tr><th>场景</th><th>Agent 配置</th></tr></thead>
+        <tbody>
+            <tr><td>内容创作</td><td>研究员 Agent（搜集资料）+ 写手 Agent（生成内容）</td></tr>
+            <tr><td>代码开发</td><td>架构师（设计方案）+ 开发者（编写代码）+ 审查员（代码审查）</td></tr>
+            <tr><td>信息监控</td><td>监控 Agent（定时检索）+ 分析 Agent（数据分析）+ 通知 Agent（推送摘要）</td></tr>
+        </tbody>
+    </table>
+    <h3>配置示例</h3>
+    <pre>{
+  "agents": [
+    {
+      "name": "研究员",
+      "description": "负责信息检索和资料搜集",
+      "model": "qwen-max",
+      "skills": ["news", "file_reader", "browser_cdp"]
+    },
+    {
+      "name": "写手",
+      "description": "负责内容创作和编辑",
+      "model": "qwen-plus",
+      "skills": ["docx", "pptx", "multi_agent_collaboration"]
+    }
+  ]
+}</pre>
+</div>
+
+<!-- 12. 安全特性 -->
+<div class="card" id="security">
+    <h2><span class="section-num">12</span> 安全特性</h2>
+    <p class="section-desc">CoPaw 内置多层安全防护机制，保障数据与系统安全。</p>
+    <div class="arch-diagram">┌─────────────────────────────────────┐
+│  技能安全扫描 (Skill Scanner)        │  安装前扫描：提示词注入、命令注入、
+│                                     │  硬编码密钥、数据外泄
+├─────────────────────────────────────┤
+│  工具防护 (Tool Guard)               │  运行时拦截：危险 Shell 命令、
+│                                     │  fork 炸弹、反向 Shell
+├─────────────────────────────────────┤
+│  文件访问守卫 (File Access Guard)    │  路径限制：~/.ssh、密钥文件、
+│                                     │  系统目录等敏感路径
+├─────────────────────────────────────┤
+│  Web 登录认证 (Optional Auth)        │  可选的控制台登录防护
+├─────────────────────────────────────┤
+│  本地部署                            │  所有数据存储在本地，无第三方托管
+└─────────────────────────────────────┘</div>
+    <h3>工具防护拦截类型</h3>
+    <table>
+        <thead><tr><th>类型</th><th>示例</th></tr></thead>
+        <tbody>
+            <tr><td>系统破坏</td><td><code>rm -rf /</code>, <code>mkfs</code>, <code>dd if=/dev/zero</code></td></tr>
+            <tr><td>Fork 炸弹</td><td><code>:(){ :|:& };:</code></td></tr>
+            <tr><td>反向 Shell</td><td><code>bash -i >& /dev/tcp/...</code></td></tr>
+            <tr><td>权限提升</td><td><code>chmod 777 /</code>, <code>chown root</code></td></tr>
+            <tr><td>密钥窃取</td><td><code>cat ~/.ssh/*</code>, <code>cat /etc/shadow</code></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 13. 开发指南 -->
+<div class="card" id="development">
+    <h2><span class="section-num">13</span> 开发指南</h2>
+    <h3>从源码构建</h3>
+    <pre><span style="color:#6a9955"># 1. 克隆仓库</span>
+git clone https://github.com/agentscope-ai/CoPaw.git && cd CoPaw
+
+<span style="color:#6a9955"># 2. 构建前端</span>
+cd console && npm ci && npm run build && cd ..
+
+<span style="color:#6a9955"># 3. 复制构建产物</span>
+mkdir -p src/copaw/console && cp -R console/dist/. src/copaw/console/
+
+<span style="color:#6a9955"># 4. 安装 Python 包</span>
+pip install -e ".[dev,full]"
+
+<span style="color:#6a9955"># 5. 运行</span>
+copaw init --defaults && copaw app</pre>
+    <h3>核心依赖</h3>
+    <table>
+        <thead><tr><th>包</th><th>版本</th><th>用途</th></tr></thead>
+        <tbody>
+            <tr><td>agentscope</td><td>1.0.18</td><td>Agent 框架</td></tr>
+            <tr><td>fastapi</td><td>—</td><td>Web 框架</td></tr>
+            <tr><td>uvicorn</td><td>>=0.40.0</td><td>ASGI 服务器</td></tr>
+            <tr><td>apscheduler</td><td>>=3.11.2</td><td>定时任务</td></tr>
+            <tr><td>playwright</td><td>>=1.49.0</td><td>浏览器自动化</td></tr>
+        </tbody>
+    </table>
+    <h3>代码规范</h3>
+    <ul>
+        <li><strong>代码风格</strong>: Black (line-length=79)</li>
+        <li><strong>类型注解</strong>: 必须添加</li>
+        <li><strong>Pre-commit</strong>: 提交前自动检查</li>
+        <li><strong>提交格式</strong>: <code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code></li>
+    </ul>
+</div>
+
+<!-- 14. 常见问题 -->
+<div class="card" id="faq">
+    <h2><span class="section-num">14</span> 常见问题</h2>
+    <table>
+        <thead><tr><th>问题</th><th>解决方案</th></tr></thead>
+        <tbody>
+            <tr><td>pip install 报错</td><td>确保 Python 3.10~3.13，或使用脚本安装/Docker</td></tr>
+            <tr><td>Windows LTSC 安装失败</td><td>使用 CMD 安装或手动安装 uv</td></tr>
+            <tr><td>前端控制台空白</td><td>重新构建前端：<code>cd console && npm ci && npm run build</code></td></tr>
+            <tr><td>无法访问 8088 端口</td><td>检查端口占用，更换端口或检查防火墙</td></tr>
+            <tr><td>对话无响应</td><td>确认 API Key 有效，检查网络和额度</td></tr>
+            <tr><td>Docker 中无法连接 Ollama</td><td>使用 <code>host.docker.internal</code> 替代 localhost</td></tr>
+            <tr><td>自定义技能未加载</td><td>确认包含 SKILL.md，放在 skills/ 目录下，重启服务</td></tr>
+            <tr><td>更新后功能异常</td><td>重新构建前端、重新安装 Python 包、清除浏览器缓存</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 15. 路线图 -->
+<div class="card" id="roadmap">
+    <h2><span class="section-num">15</span> 路线图</h2>
+    <h3>进行中</h3>
+    <table>
+        <thead><tr><th>方向</th><th>事项</th></tr></thead>
+        <tbody>
+            <tr><td>控制台 Web UI</td><td>在控制台中透出更多信息与配置</td></tr>
+            <tr><td>多智能体</td><td>Agentic Ralph Loop</td></tr>
+            <tr><td>多模态</td><td>语音/视频通话与实时交互</td></tr>
+            <tr><td>大小模型协同</td><td>多模型路由，不同任务使用不同模型</td></tr>
+            <tr><td>记忆系统</td><td>经验沉淀与技能提炼、记忆机制切换</td></tr>
+            <tr><td>沙箱</td><td>与 AgentScope Runtime 沙箱深度集成</td></tr>
+        </tbody>
+    </table>
+    <h3>版本历史</h3>
+    <table>
+        <thead><tr><th>版本</th><th>日期</th><th>关键更新</th></tr></thead>
+        <tbody>
+            <tr><td><span class="tag tag-blue">v1.0.0</span></td><td>2026-03-30</td><td>多 Agent、本地模型、全局流控、工具守卫、微信频道、异步工具、浏览器 CDP</td></tr>
+            <tr><td><span class="tag tag-gray">v0.2.0</span></td><td>2026-03-24</td><td>—</td></tr>
+            <tr><td><span class="tag tag-gray">v0.1.0</span></td><td>2026-03-18</td><td>—</td></tr>
+            <tr><td><span class="tag tag-gray">v0.0.7</span></td><td>2026-03-12</td><td>—</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 16. 全景分析摘要 -->
+<div class="card" id="full-analysis">
+    <h2><span class="section-num">16</span> 全景分析摘要</h2>
+    <h3>关键设计模式</h3>
+    <table>
+        <thead><tr><th>模式</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td>多代理隔离</td><td>每个 Agent 运行在独立 Workspace 中，拥有完整的运行时组件栈</td></tr>
+            <tr><td>插件化架构</td><td>渠道和技能均遵循注册-发现-加载的插件模式，支持热重载</td></tr>
+            <tr><td>优先级队列</td><td>消息通过四级优先级路由，确保关键命令可抢占普通对话</td></tr>
+            <tr><td>流式优先</td><td>所有 Agent 响应使用 SSE 流式传输，支持 TaskTracker 取消</td></tr>
+            <tr><td>零停机热重载</td><td>配置变更时原子替换实例，不影响正在处理的请求</td></tr>
+            <tr><td>安全纵深防御</td><td>Tool Guard (运行时) + Skill Scanner (安装时) 双层安全</td></tr>
+            <tr><td>声明式服务管理</td><td>ServiceManager 通过优先级和依赖关系管理组件生命周期</td></tr>
+        </tbody>
+    </table>
+    <h3>技术栈总览</h3>
+    <div class="two-col">
+        <div>
+            <h4>后端</h4>
+            <table>
+                <tbody>
+                    <tr><td>语言</td><td>Python 3.10-3.13</td></tr>
+                    <tr><td>Web 框架</td><td>FastAPI + Uvicorn</td></tr>
+                    <tr><td>Agent 框架</td><td>AgentScope 1.0.18</td></tr>
+                    <tr><td>定时任务</td><td>APScheduler</td></tr>
+                    <tr><td>语义记忆</td><td>ReMe-Light</td></tr>
+                    <tr><td>CLI</td><td>Click</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h4>前端 (控制台)</h4>
+            <table>
+                <tbody>
+                    <tr><td>框架</td><td>React 18 + TypeScript</td></tr>
+                    <tr><td>构建</td><td>Vite 6</td></tr>
+                    <tr><td>UI 组件</td><td>Ant Design 5</td></tr>
+                    <tr><td>状态管理</td><td>Zustand 5</td></tr>
+                    <tr><td>路由</td><td>React Router v7</td></tr>
+                    <tr><td>国际化</td><td>i18next</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <h3>消息处理管线</h3>
+    <div class="arch-diagram">渠道接收消息 → 优先级队列入队 → 批量合并 → 命令分发
+    → 工具守卫审批检查 → Agent 执行 → 消息渲染 → 渠道发送 → 会话持久化
+
+优先级路由:
+  critical (0): /stop 命令
+  high    (10): /status, /restart 等控制命令
+  normal  (20): 普通对话
+  low     (30): 批量操作</div>
+</div>
+
+<div class="footer">
+    CoPaw 项目文档综合报告 &copy; 2026 &nbsp;|&nbsp; 基于 docs/ 目录下 16 个 Markdown 文件自动生成 &nbsp;|&nbsp; 报告时间：2026-04-10
+</div>
+
+</div><!-- /.main-content -->
+</div><!-- /.page-layout -->
+
+<script>
+// 回到顶部按钮
+const btn = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+    btn.classList.toggle('show', window.scrollY > 400);
+});
+btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// 侧边栏高亮当前章节
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+const sections = document.querySelectorAll('.card[id]');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            navLinks.forEach(a => a.classList.remove('active'));
+            const active = document.querySelector(`.sidebar-nav a[href="#${entry.target.id}"]`);
+            if (active) active.classList.add('active');
+        }
+    });
+}, { rootMargin: '-10% 0px -80% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
